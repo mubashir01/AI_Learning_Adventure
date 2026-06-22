@@ -3,6 +3,8 @@ from collections import defaultdict, deque
 from pathlib import Path
 from random import choice
 
+from services.xp import calculate_xp
+
 DB_PATH = Path(__file__).resolve().parents[2] / "database" / "app.db"
 RECENT_QUESTIONS = defaultdict(lambda: deque(maxlen=12))
 
@@ -777,7 +779,7 @@ def submit_answer(question_id: int, answer: str, time_left: int) -> dict[str, ob
             return {"correct": False, "earned_xp": 0, "earned_coins": 0, "score": get_score()}
 
         correct = answer == row[0]
-        earned_xp = 10 + max(time_left, 0) if correct else 0
+        earned_xp = calculate_xp(correct, time_left)
         earned_coins = 5 if correct else 0
         if correct:
             connection.execute(
