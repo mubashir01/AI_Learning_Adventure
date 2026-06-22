@@ -4,6 +4,7 @@ from pathlib import Path
 from random import choice, shuffle
 
 from services.coins import calculate_coins
+from services.levels import calculate_level
 from services.xp import calculate_xp
 
 DB_PATH = Path(__file__).resolve().parents[2] / "database" / "app.db"
@@ -794,13 +795,15 @@ def submit_answer(question_id: int, answer: str, time_left: int) -> dict[str, ob
         earned_xp = calculate_xp(correct, time_left)
         earned_coins = calculate_coins(correct)
         if correct:
+            current_xp = connection.execute("SELECT xp FROM score WHERE id = 1").fetchone()[0]
+            next_level = calculate_level(current_xp + earned_xp)
             connection.execute(
                 """
                 UPDATE score
-                SET xp = xp + ?, coins = coins + ?, level = ((xp + ?) / 100) + 1
+                SET xp = xp + ?, coins = coins + ?, level = ?
                 WHERE id = 1
                 """,
-                (earned_xp, earned_coins, earned_xp),
+                (earned_xp, earned_coins, next_level),
             )
 
     return {
