@@ -1,8 +1,9 @@
 import sqlite3
 from collections import defaultdict, deque
 from pathlib import Path
-from random import choice
+from random import choice, shuffle
 
+from services.coins import calculate_coins
 from services.xp import calculate_xp
 
 DB_PATH = Path(__file__).resolve().parents[2] / "database" / "app.db"
@@ -745,7 +746,7 @@ def get_random_question(category: str, difficulty: str) -> dict[str, object]:
     with sqlite3.connect(DB_PATH) as connection:
         rows = connection.execute(
             """
-            SELECT id, category, difficulty, question, options
+            SELECT id, category, difficulty, question, options, correct_answer
             FROM questions
             WHERE category = ? AND difficulty = ?
             """,
@@ -758,12 +759,16 @@ def get_random_question(category: str, difficulty: str) -> dict[str, object]:
     candidates = [row for row in rows if row[0] not in recent] or rows
     row = choice(candidates)
     recent.append(row[0])
+    options = [option for option in row[4].split("|") if option]
+    if row[5] and row[5] not in options:
+        options.append(row[5])
+    shuffle(options)
     return {
         "id": row[0],
         "category": row[1],
         "difficulty": row[2],
         "question": row[3],
-        "options": row[4].split("|"),
+        "options": options,
         "seconds": 30,
     }
 
@@ -776,11 +781,18 @@ def submit_answer(question_id: int, answer: str, time_left: int) -> dict[str, ob
             (question_id,),
         ).fetchone()
         if row is None:
-            return {"correct": False, "earned_xp": 0, "earned_coins": 0, "score": get_score()}
+            return {
+                "correct": False,
+                "correct_answer": "",
+                "earned_xp": 0,
+                "earned_coins": 0,
+                "score": get_score(),
+            }
 
-        correct = answer == row[0]
+        correct_answer = row[0] or ""
+        correct = answer == correct_answer
         earned_xp = calculate_xp(correct, time_left)
-        earned_coins = 5 if correct else 0
+        earned_coins = calculate_coins(correct)
         if correct:
             connection.execute(
                 """
@@ -793,7 +805,7 @@ def submit_answer(question_id: int, answer: str, time_left: int) -> dict[str, ob
 
     return {
         "correct": correct,
-        "correct_answer": row[0],
+        "correct_answer": correct_answer,
         "earned_xp": earned_xp,
         "earned_coins": earned_coins,
         "score": get_score(),

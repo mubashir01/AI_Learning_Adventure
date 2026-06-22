@@ -199,7 +199,7 @@ Output changed files only.
 
 ---
 
-## Manual Test Checklist
+## Manual Test Checklis
 
 * Finish quiz.
 * Verify coins increase.
