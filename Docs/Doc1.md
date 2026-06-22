@@ -295,14 +295,292 @@ v0.3.4_badges
 
 ---
 
+# Micro Sprint 3.4 – Achievement Badges
+
+## Codex Reasoning Level
+
+LOW
+
+---
+
+## Goal
+
+Implement achievement badges.
+
+---
+
+## Context
+
+Sprint 3.1 XP Service.
+
+Sprint 3.2 Coin Rewards.
+
+Sprint 3.3 Level Progression.
+
+are already complete.
+
+Gamification architecture already exists.
+
+---
+
+## Requirements
+
+Implement achievement badges.
+
+Users should earn badges based on performance.
+
+Badges should be awarded according to score percentage.
+
+Example:
+
+100%
+
+Legend Badge
+
+95–99%
+
+Diamond Badge
+
+90–94%
+
+Gold Badge
+
+80–89%
+
+Silver Badge
+
+70–79%
+
+Bronze Badge
+
+Below 70%
+
+No badge.
+
+Badge information should persist.
+
+---
+
+## Hard Constraints
+
+Assume existing architecture is correct.
+
+Preserve all working code.
+
+Generate minimal changes only.
+
+Avoid refactoring.
+
+Avoid rewriting files.
+
+Modify only files required.
+
+No explanations.
+
+No comments.
+
+Output changed files only.
+
+---
+
+## Out Of Scope
+
+Streaks.
+
+Champion status.
+
+Hall of Fame.
+
+Leaderboards.
+
+Parent dashboard.
+
+---
+
+## Expected Output
+
+Only modified files required to support achievement badges.
+
+---
+
+## Paste Into Codex
+
+Continue previous work.
+
+Implement achievement badges.
+
+Users should earn badges based on score percentage.
+
+Badge information should persist.
+
+Assume existing architecture is correct.
+
+Preserve all working code.
+
+Generate minimal changes only.
+
+Avoid refactoring.
+
+Avoid rewriting files.
+
+Modify only files required.
+
+No explanations.
+
+No comments.
+
+Output changed files only.
+
+---
+
+## Manual Test Checklist
+
+* Complete quizzes with varying scores.
+* Verify appropriate badges are awarded.
+* Restart application.
+* Verify badges persist.
+* Verify previous functionality continues to work.
+
+---
+
+## Git Commit
+
+v0.3.4_badges
+
+---
+
 # Micro Sprint 3.5 – Streak Counter
 
-LOW reasoning.
+## Codex Reasoning Level
 
-Git Commit:
+LOW
+
+---
+
+## Goal
+
+Implement streak tracking.
+
+---
+
+## Context
+
+Sprint 3.1 XP Service.
+
+Sprint 3.2 Coin Rewards.
+
+Sprint 3.3 Level Progression.
+
+Sprint 3.4 Achievement Badges.
+
+are already complete.
+
+Gamification architecture already exists.
+
+---
+
+## Requirements
+
+Implement streak tracking.
+
+Users should maintain streaks through consecutive successful quiz sessions.
+
+Streaks should increase after successful sessions.
+
+Streaks should reset after missed sessions or failures according to business rules.
+
+Streak information should persist.
+
+---
+
+## Hard Constraints
+
+Assume existing architecture is correct.
+
+Preserve all working code.
+
+Generate minimal changes only.
+
+Avoid refactoring.
+
+Avoid rewriting files.
+
+Modify only files required.
+
+No explanations.
+
+No comments.
+
+Output changed files only.
+
+---
+
+## Out Of Scope
+
+Champion status.
+
+Hall of Fame.
+
+Leaderboards.
+
+Parent dashboard.
+
+AI features.
+
+---
+
+## Expected Output
+
+Only modified files required to support streak tracking.
+
+---
+
+## Paste Into Codex
+
+Continue previous work.
+
+Implement streak tracking.
+
+Users should maintain streaks through consecutive successful quiz sessions.
+
+Streak information should persist.
+
+Assume existing architecture is correct.
+
+Preserve all working code.
+
+Generate minimal changes only.
+
+Avoid refactoring.
+
+Avoid rewriting files.
+
+Modify only files required.
+
+No explanations.
+
+No comments.
+
+Output changed files only.
+
+---
+
+## Manual Test Checklist
+
+* Complete multiple quiz sessions.
+* Verify streak increases.
+* Simulate streak reset conditions.
+* Restart application.
+* Verify streak persists.
+* Verify previous functionality continues to work.
+
+---
+
+## Git Commit
 
 v0.3.5_streaks
 
+---
 ---
 
 # Sprint 4 – AI Question Generator

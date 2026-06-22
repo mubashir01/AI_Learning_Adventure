@@ -5,6 +5,7 @@ from random import choice, shuffle
 
 from services.coins import calculate_coins
 from services.levels import calculate_level
+from services.streaks import calculate_streak
 from services.xp import calculate_xp
 
 DB_PATH = Path(__file__).resolve().parents[2] / "database" / "app.db"
@@ -666,12 +667,16 @@ def init_db() -> None:
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 xp INTEGER NOT NULL,
                 coins INTEGER NOT NULL,
-                level INTEGER NOT NULL
+                level INTEGER NOT NULL,
+                streak INTEGER NOT NULL DEFAULT 0
             )
             """
         )
+        columns = [row[1] for row in connection.execute("PRAGMA table_info(score)").fetchall()]
+        if "streak" not in columns:
+            connection.execute("ALTER TABLE score ADD COLUMN streak INTEGER NOT NULL DEFAULT 0")
         connection.execute(
-            "INSERT OR IGNORE INTO score (id, xp, coins, level) VALUES (1, 0, 0, 1)"
+            "INSERT OR IGNORE INTO score (id, xp, coins, level, streak) VALUES (1, 0, 0, 1, 0)"
         )
         connection.execute(
             """
@@ -726,8 +731,8 @@ def init_db() -> None:
 def get_score() -> dict[str, int]:
     init_db()
     with sqlite3.connect(DB_PATH) as connection:
-        row = connection.execute("SELECT xp, coins, level FROM score WHERE id = 1").fetchone()
-    return {"xp": row[0], "coins": row[1], "level": row[2]}
+        row = connection.execute("SELECT xp, coins, level, streak FROM score WHERE id = 1").fetchone()
+    return {"xp": row[0], "coins": row[1], "level": row[2], "streak": row[3]}
 
 
 def get_categories() -> list[str]:
@@ -794,16 +799,24 @@ def submit_answer(question_id: int, answer: str, time_left: int) -> dict[str, ob
         correct = answer == correct_answer
         earned_xp = calculate_xp(correct, time_left)
         earned_coins = calculate_coins(correct)
+        current_xp, current_streak = connection.execute(
+            "SELECT xp, streak FROM score WHERE id = 1"
+        ).fetchone()
+        next_streak = calculate_streak(current_streak, correct)
         if correct:
-            current_xp = connection.execute("SELECT xp FROM score WHERE id = 1").fetchone()[0]
             next_level = calculate_level(current_xp + earned_xp)
             connection.execute(
                 """
                 UPDATE score
-                SET xp = xp + ?, coins = coins + ?, level = ?
+                SET xp = xp + ?, coins = coins + ?, level = ?, streak = ?
                 WHERE id = 1
                 """,
-                (earned_xp, earned_coins, next_level),
+                (earned_xp, earned_coins, next_level, next_streak),
+            )
+        else:
+            connection.execute(
+                "UPDATE score SET streak = ? WHERE id = 1",
+                (next_streak,),
             )
 
     return {
